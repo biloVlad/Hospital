@@ -14,6 +14,7 @@ public class Config {
     
     private Config() {
         try {
+            LOG.info("Run load config");
             LOG.warn("Conf: load: acsk.properties = {}", System.getProperty("path.to.config"));
             InputStream file = new FileInputStream(new File(System.getProperty("path.to.config")));
             
