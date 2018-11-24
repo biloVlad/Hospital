@@ -32,7 +32,7 @@ public class RelocatePatient extends HttpHandler {
     public RelocatePatient() {
 
     }
- private byte[] taskReloacate(String buff, DB linkDB) throws IOException {
+ private String taskReloacate(String buff, DB linkDB) throws IOException {
         String result = "";
         String collForAdd = System.getProperty("collectionForAddPatient");
         JSONObject obj = new JSONObject(buff);
@@ -51,8 +51,9 @@ public class RelocatePatient extends HttpHandler {
         
         LOG.info(result);        
         
-        return result.getBytes();
+        return result;
     }
+ 
     @Override
     public void service(Request rqst, Response rspns) throws Exception {
        long startTime = System.currentTimeMillis();
@@ -77,11 +78,11 @@ public class RelocatePatient extends HttpHandler {
                 return;
             }
 
-            byte[] result = taskReloacate(buff, dbLink);            
+            String result = taskReloacate(buff, dbLink);            
            
             rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(result.length);                 
-            rspns.getOutputStream().write(result);
+            rspns.setContentLength(result.length());                 
+            rspns.getOutputStream().write(result.getBytes());
             rspns.flush();
         } catch (Exception ex) {
             LOG.error("ERROR {}", ex);

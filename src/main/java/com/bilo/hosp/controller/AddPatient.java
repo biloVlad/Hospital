@@ -40,20 +40,17 @@ public class AddPatient extends HttpHandler {
 //    public AddPatient(Locale locale) throws IOException {
 //        this.locale = locale;
 //    }
-
     private String taskAdd(String buff, DB linkDB) throws IOException {
         String result = "";
         String collForAdd = System.getProperty("collectionForAddPatient");
         JSONObject obj = new JSONObject(buff);
-        String tmp1 = obj.getJSONObject("document").getString("pnum");
-
-        byte[] tmp2 = obj.getString("name").getBytes();
 
         MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collForAdd);
         LOG.info("Set collection database: " + collForAdd);
         LOG.warn("Start document generate");
-        Document doc = new Document("name", IOUtils.toString(obj.getString("name").getBytes(), "UTF-8"))
-                .append("surename", IOUtils.toString(obj.getString("surename").getBytes(), "UTF-8"))
+        
+        Document doc = new Document("name", obj.getString("name")) // Нормально отображение в Postman, некорректное в консоли и логах
+                .append("surename", IOUtils.toString(obj.getString("surename").getBytes(), "UTF-8")) // Нормально в консоли и логах, некорректно в Postman
                 .append("lastname", IOUtils.toString(obj.getString("lastname").getBytes(), "UTF-8"))
                 .append("org", IOUtils.toString(obj.getString("org").getBytes(), "UTF-8"))
                 .append("orgunit", IOUtils.toString(obj.getString("orgunit").getBytes(), "UTF-8"))
@@ -81,10 +78,10 @@ public class AddPatient extends HttpHandler {
                                                 .getJSONObject("dosage")
                                                 .getString("count").getBytes(), "UTF-8")))));
         LOG.warn("Document is generated: {}", doc);
-        
+
         LOG.warn("Insert document into {}", collForAdd);
         collection.insertOne(doc);
-        
+
         result = "Document '" + doc + "' insert into collection '" + collection + "'";
         LOG.info(result);
 
@@ -97,13 +94,12 @@ public class AddPatient extends HttpHandler {
         LOG.warn("Get DB");
         DB dbLink = DB.getInstance();
 
-        
         rspns.setCharacterEncoding("utf8");
 
-        rqst.setAttribute("startTime", startTime);
-        rqst.setAttribute("description", "Получение статуса сертификата");
-        rqst.setAttribute("className", "AddPatient");
-        rqst.setAttribute("methodName", "service");
+//        rqst.setAttribute("startTime", startTime);
+//        rqst.setAttribute("description", "Получение статуса сертификата");
+//        rqst.setAttribute("className", "AddPatient");
+//        rqst.setAttribute("methodName", "service");
         //System.out.println(IOUtils.toString(rqst.getInputStream()));
         try {
             String buff = null;
@@ -140,11 +136,11 @@ public class AddPatient extends HttpHandler {
 //                    rqst);
 //   
 // ??????????????????????????????????????????????????????????????    
-            String result = taskAdd(buff, dbLink);            
-            byte[] res = IOUtils.toByteArray(IOUtils.toString(result.getBytes()));
+            String result = taskAdd(buff, dbLink);
+
             rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(res.length);
-            rspns.getOutputStream().write(res);
+            rspns.setContentLength(result.length());
+            rspns.getOutputStream().write(result.getBytes());
             rspns.flush();
         } catch (Exception ex) {
             LOG.error("ERROR {}", ex);

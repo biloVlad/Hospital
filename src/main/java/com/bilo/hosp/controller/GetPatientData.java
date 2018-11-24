@@ -32,10 +32,10 @@ public class GetPatientData extends HttpHandler {
 
     }   
 
-    private byte[] taskGetData(byte[] buff, DB linkDB) throws IOException {
+    private String taskGetData(String buff, DB linkDB) throws IOException {
         String result = "";
         String collForAdd = System.getProperty("collectionForAddPatient");
-        JSONObject obj = new JSONObject(IOUtils.toString(buff));
+        JSONObject obj = new JSONObject(buff);
 
         String _id = obj.getString("_id");
         String t = IOUtils.toString(obj.getJSONObject("info").getJSONObject("data").getString("t").getBytes(), "UTF-8");
@@ -61,7 +61,7 @@ public class GetPatientData extends HttpHandler {
         
         LOG.info(result);        
         
-        return IOUtils.toByteArray(result);
+        return result;
     }
 
     @Override
@@ -74,13 +74,13 @@ public class GetPatientData extends HttpHandler {
         rspns.setCharacterEncoding("utf8");
 
         try {
-            byte[] buff = null;
+            String buff = null;
             try {
-                buff = IOUtils.toByteArray(rqst.getInputStream());
+                buff = IOUtils.toString(rqst.getInputStream());
             } catch (IOException ex) {
                 LOG.error("ERROR {}", ex);
             }
-            if ((buff == null) || (buff.length == 0)) {
+            if ((buff == null) || (buff.length() == 0)) {
                 rqst.setAttribute("coderror", 400);
                 rqst.setAttribute("texterror", "No request bytes.");
                 LOG.error("ERROR", "No request bytes");
@@ -88,12 +88,12 @@ public class GetPatientData extends HttpHandler {
                 return;
             }
 
-            byte[] result = taskGetData(buff, dbLink);
+            String result = taskGetData(buff, dbLink);
             
             //byte[] res = IOUtils.toByteArray(IOUtils.toString(result.getBytes()));
             rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(result.length);                 
-            rspns.getOutputStream().write(result);
+            rspns.setContentLength(result.length());                 
+            rspns.getOutputStream().write(result.getBytes());
             rspns.flush();
         } catch (Exception ex) {
             LOG.error("ERROR {}", ex);
