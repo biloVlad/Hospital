@@ -24,12 +24,12 @@ public class Hosp {
         // Запуск HTTP сервера   
         HttpServer server = HttpServer.createSimpleServer("/hosp");
         final ServerConfiguration config = server.getServerConfiguration();
-
+        
         // Подключение контроллеров
         config.addHttpHandler(new AddPatient(), "/hosp/patient/add");
         config.addHttpHandler(new GetPatientData(), "/hosp/patient/getData");
         config.addHttpHandler(new RelocatePatient(), "/hosp/patient/relocate");
-
+        
         config.setJmxEnabled(true);
         try {
             server.start();

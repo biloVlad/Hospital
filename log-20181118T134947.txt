@@ -1,5 +1,0 @@
-647  [main] WARN  com.bilo.hosp.Config - Conf: load: acsk.properties = C:\config\props.config
-651  [main] WARN  com.bilo.hosp.Config - SYSPROPS:exchange=topic_mongo
-651  [main] WARN  com.bilo.hosp.Config - SYSPROPS:host=localhost
-651  [main] WARN  com.bilo.hosp.Config - SYSPROPS:database=rabbitMQ
-652  [main] WARN  com.bilo.hosp.Config - SYSPROPS:collection=data

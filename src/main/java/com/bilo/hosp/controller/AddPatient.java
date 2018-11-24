@@ -93,10 +93,11 @@ public class AddPatient extends HttpHandler {
 
     @Override
     public void service(Request rqst, Response rspns) throws Exception {
+        long startTime = System.currentTimeMillis();
+        
         LOG.warn("Get DB");
         DB dbLink = DB.getInstance();
-
-        long startTime = System.currentTimeMillis();
+        
         rspns.setCharacterEncoding("utf8");
 
         rqst.setAttribute("startTime", startTime);
