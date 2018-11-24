@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.bilo.hosp.controller;
 
 import com.bilo.hosp.DB;
@@ -13,6 +8,7 @@ import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.currentDate;
 import static com.mongodb.client.model.Updates.set;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import org.apache.commons.io.IOUtils;
 import org.bson.*;
@@ -32,14 +28,14 @@ public class GetPatientData extends HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetPatientData.class.getName());
 
-    public GetPatientData() {
+ public GetPatientData() {
 
-    }
+    }   
 
-    private String taskGetData(String buff, DB linkDB) throws IOException {
+    private byte[] taskGetData(byte[] buff, DB linkDB) throws IOException {
         String result = "";
         String collForAdd = System.getProperty("collectionForAddPatient");
-        JSONObject obj = new JSONObject(buff);
+        JSONObject obj = new JSONObject(IOUtils.toString(buff));
 
         String _id = obj.getString("_id");
         String t = IOUtils.toString(obj.getJSONObject("info").getJSONObject("data").getString("t").getBytes(), "UTF-8");
@@ -63,9 +59,9 @@ public class GetPatientData extends HttpHandler {
              result = "Температура пациента '" + targetPatient.getString("name") + " " + targetPatient.getString("lastname") + "' установлена на " + t;
          }
         
-        LOG.info(result);
-
-        return result;
+        LOG.info(result);        
+        
+        return IOUtils.toByteArray(result);
     }
 
     @Override
@@ -78,13 +74,13 @@ public class GetPatientData extends HttpHandler {
         rspns.setCharacterEncoding("utf8");
 
         try {
-            String buff = null;
+            byte[] buff = null;
             try {
-                buff = IOUtils.toString(rqst.getInputStream());
+                buff = IOUtils.toByteArray(rqst.getInputStream());
             } catch (IOException ex) {
                 LOG.error("ERROR {}", ex);
             }
-            if ((buff == null) || (buff.length() == 0)) {
+            if ((buff == null) || (buff.length == 0)) {
                 rqst.setAttribute("coderror", 400);
                 rqst.setAttribute("texterror", "No request bytes.");
                 LOG.error("ERROR", "No request bytes");
@@ -92,11 +88,12 @@ public class GetPatientData extends HttpHandler {
                 return;
             }
 
-            String result = taskGetData(buff, dbLink);
-            byte[] res = IOUtils.toByteArray(IOUtils.toString(result.getBytes()));
+            byte[] result = taskGetData(buff, dbLink);
+            
+            //byte[] res = IOUtils.toByteArray(IOUtils.toString(result.getBytes()));
             rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(res.length);
-            rspns.getOutputStream().write(res);
+            rspns.setContentLength(result.length);                 
+            rspns.getOutputStream().write(result);
             rspns.flush();
         } catch (Exception ex) {
             LOG.error("ERROR {}", ex);

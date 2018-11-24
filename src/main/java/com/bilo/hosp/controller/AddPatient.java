@@ -31,15 +31,15 @@ import org.slf4j.LoggerFactory;
 public class AddPatient extends HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AddPatient.class.getName());
-    private Locale locale;
+    //private Locale locale;
 
     public AddPatient() {
 
     }
 
-    public AddPatient(Locale locale) throws IOException {
-        this.locale = locale;
-    }
+//    public AddPatient(Locale locale) throws IOException {
+//        this.locale = locale;
+//    }
 
     private String taskAdd(String buff, DB linkDB) throws IOException {
         String result = "";
@@ -94,9 +94,9 @@ public class AddPatient extends HttpHandler {
     @Override
     public void service(Request rqst, Response rspns) throws Exception {
         long startTime = System.currentTimeMillis();
-        
         LOG.warn("Get DB");
         DB dbLink = DB.getInstance();
+
         
         rspns.setCharacterEncoding("utf8");
 
