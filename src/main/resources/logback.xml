@@ -1,6 +1,7 @@
 <configuration>
     <timestamp key="byDay" datePattern="yyyyMMdd'T'HHmmss"/>
     <property name="LOG_FOLDER" value="logs/" />
+    
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>

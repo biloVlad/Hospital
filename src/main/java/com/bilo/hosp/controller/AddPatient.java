@@ -31,55 +31,25 @@ import org.slf4j.LoggerFactory;
 public class AddPatient extends HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AddPatient.class.getName());
-    //private Locale locale;
 
     public AddPatient() {
 
     }
 
-//    public AddPatient(Locale locale) throws IOException {
-//        this.locale = locale;
-//    }
     private String taskAdd(String buff, DB linkDB) throws IOException {
         String result = "";
         String collForAdd = System.getProperty("collectionForAddPatient");
-        JSONObject obj = new JSONObject(buff);
+        JSONObject json = new JSONObject(buff);
 
         MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collForAdd);
         LOG.info("Set collection database: " + collForAdd);
         LOG.warn("Start document generate");
         
-        Document doc = new Document("name", obj.getString("name")) // Нормально отображение в Postman, некорректное в консоли и логах
-                .append("surename", IOUtils.toString(obj.getString("surename").getBytes(), "UTF-8")) // Нормально в консоли и логах, некорректно в Postman
-                .append("lastname", IOUtils.toString(obj.getString("lastname").getBytes(), "UTF-8"))
-                .append("org", IOUtils.toString(obj.getString("org").getBytes(), "UTF-8"))
-                .append("orgunit", IOUtils.toString(obj.getString("orgunit").getBytes(), "UTF-8"))
-                .append("room", IOUtils.toString(obj.getString("room").getBytes(), "UTF-8"))
-                .append("document", new Document("pnum", IOUtils.toString(obj.getJSONObject("document").getString("pnum").getBytes(), "UTF-8"))
-                        .append("pser", IOUtils.toString(obj.getJSONObject("document").getString("pser").getBytes(), "UTF-8")))
-                .append("info", new Document("data", new Document("t", IOUtils.toString(obj.getJSONObject("info")
-                        .getJSONObject("data")
-                        .getString("t").getBytes(), "UTF-8")))
-                        .append("medication", new Document("doctor", IOUtils.toString(obj.getJSONObject("info")
-                                .getJSONObject("medication")
-                                .getString("doctor").getBytes(), "UTF-8"))
-                                .append("name", IOUtils.toString(obj.getJSONObject("info")
-                                        .getJSONObject("medication")
-                                        .getString("name").getBytes(), "UTF-8"))
-                                .append("cod", IOUtils.toString(obj.getJSONObject("info")
-                                        .getJSONObject("medication")
-                                        .getString("cod").getBytes(), "UTF-8"))
-                                .append("dosage", new Document("time", IOUtils.toString(obj.getJSONObject("info")
-                                        .getJSONObject("medication")
-                                        .getJSONObject("dosage")
-                                        .getString("time").getBytes(), "UTF-8"))
-                                        .append("count", IOUtils.toString(obj.getJSONObject("info")
-                                                .getJSONObject("medication")
-                                                .getJSONObject("dosage")
-                                                .getString("count").getBytes(), "UTF-8")))));
-        LOG.warn("Document is generated: {}", doc);
+        Document doc = Document.parse(json.toString());    
+        
+        LOG.info("Document is generated: {}", doc);
 
-        LOG.warn("Insert document into {}", collForAdd);
+        LOG.info("Insert document into {}", collForAdd);
         collection.insertOne(doc);
 
         result = "Document '" + doc + "' insert into collection '" + collection + "'";
@@ -94,13 +64,9 @@ public class AddPatient extends HttpHandler {
         LOG.warn("Get DB");
         DB dbLink = DB.getInstance();
 
-        rspns.setCharacterEncoding("utf8");
+        rspns.setCharacterEncoding("UTF-8");
 
-//        rqst.setAttribute("startTime", startTime);
-//        rqst.setAttribute("description", "Получение статуса сертификата");
-//        rqst.setAttribute("className", "AddPatient");
-//        rqst.setAttribute("methodName", "service");
-        //System.out.println(IOUtils.toString(rqst.getInputStream()));
+        System.out.println(IOUtils.toString(rqst.getInputStream()));
         try {
             String buff = null;
             try {
