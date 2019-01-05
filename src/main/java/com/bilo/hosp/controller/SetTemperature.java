@@ -24,11 +24,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author StoneInside
  */
-public class GetPatientData extends HttpHandler {
+public class SetTemperature extends HttpHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GetPatientData.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SetTemperature.class.getName());
 
- public GetPatientData() {
+ public SetTemperature() {
 
     }   
 

@@ -26,9 +26,9 @@ public class Hosp {
         final ServerConfiguration config = server.getServerConfiguration();
         
         // Подключение контроллеров
-        config.addHttpHandler(new AddPatient(), "/hosp/patient/add");
-        config.addHttpHandler(new GetPatientData(), "/hosp/patient/getData");
-        config.addHttpHandler(new RelocatePatient(), "/hosp/patient/relocate");
+        config.addHttpHandler(new NewPatient(), "/hosp/patient/new"); // Добавление нового пациента
+        config.addHttpHandler(new SetTemperature(), "/hosp/patient/setTemperature"); // Задать измеряемую температуру
+        config.addHttpHandler(new SetRoom(), "/hosp/patient/setRoom"); // Задать палату пациента
         
         config.setJmxEnabled(true);
         try {

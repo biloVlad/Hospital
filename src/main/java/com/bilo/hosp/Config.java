@@ -13,9 +13,8 @@ public class Config {
     private static volatile Config instance = null;
     
     private Config() {
-        try {
-            LOG.info("Run load config");
-            LOG.warn("Conf: load: acsk.properties = {}", System.getProperty("path.to.config"));
+        try {            
+            LOG.info("Conf: load: acsk.properties = {}", System.getProperty("path.to.config"));
             InputStream file = new FileInputStream(new File(System.getProperty("path.to.config")));
             
             Properties props = new Properties();
