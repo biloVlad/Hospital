@@ -38,21 +38,20 @@ public class NewPatient extends HttpHandler {
 
     }
 
-    private String taskNew(byte[] buff, DB linkDB) throws IOException {
+    private String taskNew(String buff, DB linkDB) throws IOException {
         String result = "";
         String collectionName = System.getProperty("collectionForAddPatient");
 
+        // Получение коллекции для работы с БД
         MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collectionName);
-        LOG.info("Set collection database: " + collectionName);
-        LOG.warn("Start document generate");
+        LOG.info("Set collection database: " + collectionName);       
 
         Document doc = null;
-        JSONObject json =  new JSONObject(IOUtils.toString(buff, "UTF-8"));
+        JSONObject json =  new JSONObject(buff); // Создание JSON объекта из полученой информации
         
         try {
-            doc = Document.parse(json.toString());
-            LOG.info("Document is generated: {}", doc);
-           
+            doc = Document.parse(json.toString()); // Создание документа из JSON данных
+            LOG.info("Document is generated: {}", doc);           
             
             collection.insertOne(doc);           
 
@@ -72,13 +71,13 @@ public class NewPatient extends HttpHandler {
         rspns.setCharacterEncoding("UTF-8");
         
         try {
-            byte[] buff = null;
+            String buff = null;
             try {
-                buff = IOUtils.toByteArray(rqst.getInputStream());
+                buff = IOUtils.toString(rqst.getInputStream());
             } catch (IOException ex) {
                 LOG.error("ERROR {}", ex);
             }
-            if ((buff == null) || (buff.length == 0)) {
+            if ((buff == null) || (buff.length() == 0)) {
                 rqst.setAttribute("coderror", 400);
                 rqst.setAttribute("texterror", "No request bytes.");
                 LOG.error("ERROR", "No request bytes");
@@ -88,6 +87,7 @@ public class NewPatient extends HttpHandler {
 
             String result = taskNew(buff, dbLink);
 
+            // ФОрмирование ответа
             rspns.setHeader("Content-Type", "application/ocsp-response");
             rspns.setContentLength(result.length());
             rspns.getOutputStream().write(result.getBytes());
