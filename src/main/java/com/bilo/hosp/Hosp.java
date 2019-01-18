@@ -39,6 +39,8 @@ public class Hosp {
             Thread.currentThread().join();
         } catch (IOException e) {
             LOG.error("ERROR", e);
+        } finally {
+            server.shutdownNow();
         }
     }
 
