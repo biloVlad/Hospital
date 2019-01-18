@@ -44,16 +44,33 @@ public class NewPatient extends HttpHandler {
 
         // Получение коллекции для работы с БД
         MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collectionName);
-        LOG.info("Set collection database: " + collectionName);       
+        LOG.info("Set collection database: " + collectionName);
+
+        JSONObject json = new JSONObject(buff); // Создание JSON объекта из полученой информации
+
+        String pnum, pser;
+
+        pnum = json.getJSONObject("document").getString("pnum");
+        pser = json.getJSONObject("document").getString("pser");       
+
+        if (collection.find(new Document("document",
+                new Document("pnum", pnum)
+                        .append("pser", pser)))
+                .first() != null) {
+            
+            result = "Person with same documents already exists";
+            LOG.info(result);
+            
+            return result;
+        }
 
         Document doc = null;
-        JSONObject json =  new JSONObject(buff); // Создание JSON объекта из полученой информации
-        
+
         try {
             doc = Document.parse(json.toString()); // Создание документа из JSON данных
-            LOG.info("Document is generated: {}", doc);           
-            
-            collection.insertOne(doc);           
+            LOG.info("Document is generated: {}", doc);
+
+            collection.insertOne(doc);
 
             result = "Document '" + doc + "' insert in collection '" + collection + "'";
             LOG.info(result);
@@ -69,7 +86,7 @@ public class NewPatient extends HttpHandler {
         DB dbLink = DB.getInstance();
 
         rspns.setCharacterEncoding("UTF-8");
-        
+
         try {
             String buff = null;
             try {
