@@ -1,6 +1,7 @@
 package com.bilo.hosp.controller;
 
 import com.bilo.hosp.DB;
+import com.bilo.hosp.service.SetTemperatureService;
 import com.mongodb.Block;
 import com.mongodb.client.MongoCollection;
 import static com.mongodb.client.model.Filters.eq;
@@ -28,40 +29,8 @@ public class SetTemperature extends HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetTemperature.class.getName());
 
- public SetTemperature() {
+    public SetTemperature() {
 
-    }   
-
-    private String taskGetData(String buff, DB linkDB) throws IOException {
-        String result = "";
-        String collForAdd = System.getProperty("collectionForAddPatient");
-        JSONObject obj = new JSONObject(buff);
-
-        String _id = obj.getString("_id");
-        String t = IOUtils.toString(obj.getJSONObject("info").getJSONObject("data").getString("t").getBytes(), "UTF-8");
-
-        MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collForAdd);        
-        
-
-//        Block<Document> printBlock = new Block<Document>() {
-//            @Override
-//            public void apply(final Document document) {
-//                document.getString("name");
-//            }
-//        };
-//
-//        collection.find(eq("_id", new ObjectId(_id)))
-//                .forEach(printBlock);
-        Document targetPatient = collection.findOneAndUpdate(
-                eq("_id", new ObjectId(_id)),
-                set("info.data.t", t));
-         if(targetPatient != null) {             
-             result = "Температура пациента '" + targetPatient.getString("name") + " " + targetPatient.getString("lastname") + "' установлена на " + t;
-         }
-        
-        LOG.info(result);        
-        
-        return result;
     }
 
     @Override
@@ -87,12 +56,12 @@ public class SetTemperature extends HttpHandler {
                 rspns.sendError(400, "No request bytes.");
                 return;
             }
+            SetTemperatureService service = new SetTemperatureService();
+            String result = service.task(buff, dbLink);
 
-            String result = taskGetData(buff, dbLink);
-            
             //byte[] res = IOUtils.toByteArray(IOUtils.toString(result.getBytes()));
             rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(result.length());                 
+            rspns.setContentLength(result.length());
             rspns.getOutputStream().write(result.getBytes());
             rspns.flush();
         } catch (Exception ex) {

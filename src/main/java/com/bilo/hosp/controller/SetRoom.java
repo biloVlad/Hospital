@@ -6,6 +6,7 @@
 package com.bilo.hosp.controller;
 
 import com.bilo.hosp.DB;
+import com.bilo.hosp.service.SetRoomService;
 import com.mongodb.client.MongoCollection;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
@@ -32,27 +33,7 @@ public class SetRoom extends HttpHandler {
     public SetRoom() {
 
     }
- private String taskReloacate(String buff, DB linkDB) throws IOException {
-        String result = "";
-        String collForAdd = System.getProperty("collectionForAddPatient");
-        JSONObject obj = new JSONObject(buff);
 
-        String _id = obj.getString("_id");
-        String room = obj.getString("room");
-
-        MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collForAdd); 
-
-        Document targetPatient = collection.findOneAndUpdate(
-                eq("_id", new ObjectId(_id)),
-                set("room", room));
-         if(targetPatient != null) {             
-             result = "Палата пациента '" + targetPatient.getString("name") + " " + targetPatient.getString("lastname") + "' изменена на " + room;
-         }
-        
-        LOG.info(result);        
-        
-        return result;
-    }
  
     @Override
     public void service(Request rqst, Response rspns) throws Exception {
@@ -77,8 +58,9 @@ public class SetRoom extends HttpHandler {
                 rspns.sendError(400, "No request bytes.");
                 return;
             }
-
-            String result = taskReloacate(buff, dbLink);            
+            
+            SetRoomService service = new SetRoomService();
+            String result = service.task(buff, dbLink);            
            
             rspns.setHeader("Content-Type", "application/ocsp-response");
             rspns.setContentLength(result.length());                 
