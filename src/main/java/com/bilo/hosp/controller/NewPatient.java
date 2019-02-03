@@ -16,7 +16,7 @@ public class NewPatient extends HttpHandler {
 
     public NewPatient() {
 
-    }   
+    }
 
     @Override
     public void service(Request rqst, Response rspns) throws Exception {
@@ -39,15 +39,14 @@ public class NewPatient extends HttpHandler {
                 rspns.sendError(400, "No request bytes.");
                 return;
             }
-            
-            NewPatientService service = new NewPatientService();
-            
-            String result = service.task(buff, dbLink);
 
+            NewPatientService service = new NewPatientService();
+
+            String result = service.task(buff, dbLink);
+            rspns.getWriter().write(result);
+           
             // ФОрмирование ответа
-            rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(result.length());
-            rspns.getOutputStream().write(result.getBytes());
+            rspns.setHeader("Content-Type", "application/json");
             rspns.flush();
         } catch (Exception ex) {
             LOG.error("ERROR {}", ex);

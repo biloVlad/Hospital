@@ -25,9 +25,6 @@ public class Hosp {
         HttpServer server = HttpServer.createSimpleServer("/hosp");
         final ServerConfiguration config = server.getServerConfiguration();
 
-        final AccessLogBuilder builder = new AccessLogBuilder(System.getProperty("pathToLog") + "/access.log");
-        builder.instrument(config);
-
         // Подключение контроллеров
         config.addHttpHandler(new NewPatient(), "/hosp/patient/new"); // Добавление нового пациента
         config.addHttpHandler(new SetTemperature(), "/hosp/patient/setTemperature"); // Задать измеряемую температуру

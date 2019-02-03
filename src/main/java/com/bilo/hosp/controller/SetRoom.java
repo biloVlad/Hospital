@@ -62,9 +62,8 @@ public class SetRoom extends HttpHandler {
             SetRoomService service = new SetRoomService();
             String result = service.task(buff, dbLink);            
            
-            rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(result.length());                 
-            rspns.getOutputStream().write(result.getBytes());
+            rspns.setHeader("Content-Type", "application/json");   
+            rspns.getWriter().write(result);
             rspns.flush();
         } catch (Exception ex) {
             LOG.error("ERROR {}", ex);

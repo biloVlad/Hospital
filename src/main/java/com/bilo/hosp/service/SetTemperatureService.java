@@ -22,33 +22,25 @@ public class SetTemperatureService {
     }
 
     public String task(String buff, DB linkDB) throws IOException {
-        String result = "";
+        JSONObject result = new JSONObject();
         String collForAdd = System.getProperty("collectionForAddPatient");
-        JSONObject obj = new JSONObject(buff);
+        Document doc = Document.parse(buff);
 
-        String _id = obj.getString("_id");
-        String t = IOUtils.toString(obj.getJSONObject("info").getJSONObject("data").getString("t").getBytes(), "UTF-8");
+        String _id = doc.getString("_id");
+        String t = doc.getString("t");
 
         MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collForAdd);
 
-//        Block<Document> printBlock = new Block<Document>() {
-//            @Override
-//            public void apply(final Document document) {
-//                document.getString("name");
-//            }
-//        };
-//
-//        collection.find(eq("_id", new ObjectId(_id)))
-//                .forEach(printBlock);
         Document targetPatient = collection.findOneAndUpdate(
                 eq("_id", new ObjectId(_id)),
                 set("info.data.t", t));
         if (targetPatient != null) {
-            result = "Температура пациента '" + targetPatient.getString("name") + " " + targetPatient.getString("lastname") + "' установлена на " + t;
+            result.append("message", "Температура пациента '" + targetPatient.getString("name") + " " + targetPatient.getString("lastname") + "' установлена на " + t);
+            result.append("status", "success");
         }
 
-        LOG.info(result);
+        LOG.info(result.toString());
 
-        return result;
+        return result.toString();
     }
 }

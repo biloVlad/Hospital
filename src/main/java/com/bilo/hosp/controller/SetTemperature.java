@@ -56,13 +56,12 @@ public class SetTemperature extends HttpHandler {
                 rspns.sendError(400, "No request bytes.");
                 return;
             }
+            
             SetTemperatureService service = new SetTemperatureService();
             String result = service.task(buff, dbLink);
-
-            //byte[] res = IOUtils.toByteArray(IOUtils.toString(result.getBytes()));
-            rspns.setHeader("Content-Type", "application/ocsp-response");
-            rspns.setContentLength(result.length());
-            rspns.getOutputStream().write(result.getBytes());
+           
+            rspns.setHeader("Content-Type", "application/json");     
+            rspns.getWriter().write(result);
             rspns.flush();
         } catch (Exception ex) {
             LOG.error("ERROR {}", ex);
