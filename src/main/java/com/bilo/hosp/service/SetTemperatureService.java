@@ -3,6 +3,7 @@ package com.bilo.hosp.service;
 import com.bilo.hosp.DB;
 import com.bilo.hosp.controller.SetRoom;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
 import java.io.IOException;
@@ -26,13 +27,17 @@ public class SetTemperatureService {
         String collForAdd = System.getProperty("collectionForAddPatient");
         Document doc = Document.parse(buff);
 
-        String _id = doc.getString("_id");
+        String pnum, pser;
+
+        pnum = doc.getString("pnum");
+        pser = doc.getString("pser");
+
         String t = doc.getString("t");
 
         MongoCollection<Document> collection = linkDB.getDatabase().getCollection(collForAdd);
 
         Document targetPatient = collection.findOneAndUpdate(
-                eq("_id", new ObjectId(_id)),
+                and(eq("document.pnum", pnum), eq("document.pser", pser)),
                 set("info.data.t", t));
         if (targetPatient != null) {
             result.append("message", "Температура пациента '" + targetPatient.getString("name") + " " + targetPatient.getString("lastname") + "' установлена на " + t);
