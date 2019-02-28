@@ -31,19 +31,17 @@
 **json for set temperature:**
 ```json
 {
-	"_id":"5bf8307ed77d000c20adaeed",
-    "info":{
-        "data":{
-            "t":"36.0"
-        }
-    }
+    "pnum" : "111111",
+    "pser" : "AA",
+    "t":"36.0"
 }
 ```
 
 **json for relocate:**
 ```json
 {
-	"_id":"5bf8307ed77d000c20adaeed",
-    "room":"1a"
+    "pnum" : "111111",
+    "pser" : "AA",
+    "room":"2a"
 }
 ```
